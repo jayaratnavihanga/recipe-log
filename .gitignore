@@ -2,7 +2,6 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-.env
 
 # React / Frontend
 client/node_modules/
@@ -19,9 +18,5 @@ npm-debug.log*
 Thumbs.db
 
 # IDE / Editor settings
-.vscode/
 .idea/
 
-# OS specific
-*.swp
-*~

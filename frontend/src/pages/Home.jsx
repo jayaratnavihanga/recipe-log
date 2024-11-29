@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // To navigate to the RecipeDetails page
 import { fetchRecipes, addNewRecipe, updateRecipe, deleteRecipe } from '../services';
 import AddRecipeModal from '../components/AddRecipeModal';
-import EditRecipeModal from '../components/EditRecipeModal'; // Import the EditModal component
+import EditRecipeModal from '../components/EditRecipeModal';
 
 const Home = () => {
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State to control edit modal visibility
-    const [recipeToEdit, setRecipeToEdit] = useState(null); // State to store the recipe being edited
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [recipeToEdit, setRecipeToEdit] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadRecipes = async () => {
@@ -46,44 +48,68 @@ const Home = () => {
     if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
     const handleEdit = (recipe) => {
-        setRecipeToEdit(recipe); // Set the recipe to be edited
-        setIsEditModalOpen(true); // Open the edit modal
+        setRecipeToEdit(recipe);
+        setIsEditModalOpen(true);
     };
 
     return (
-        <div>
-            <button onClick={() => setIsAddModalOpen(true)} className="mb-4 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
+        <div className="min-h-screen bg-cover bg-center bg-no-repeat /*bg-yellow-400*/ bg-[url('/bg.jpg')] relative pt-5">
+            <div className="max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {recipes.map((recipe) => (
+                        <div
+                            key={recipe._id}
+                            className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+                        >
+                            <div className="p-6">
+                                <h2
+                                    className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer hover:text-blue-500"
+                                    onClick={() => navigate(`/recipe/${recipe._id}`)} // Navigate to recipe details
+                                >
+                                    {recipe.name}
+                                </h2>
+                                <p className="text-gray-700 mb-4">{recipe.description}</p>
+                                <h3 className="font-semibold mb-2">Ingredients:</h3>
+                                <ul className="list-disc pl-5 text-gray-600 mb-4">
+                                    {recipe.ingredients.map((ingredient, index) => (
+                                        <li key={index}>{ingredient}</li>
+                                    ))}
+                                </ul>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => {
+                                            if (window.confirm('Are you sure?')) handleAction('delete', recipe._id);
+                                        }}
+                                        className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+                                    >
+                                        Delete
+                                    </button>
+                                    <button
+                                        onClick={() => handleEdit(recipe)}
+                                        className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+                                    >
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="fixed bottom-8 right-8 bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 shadow-lg"
+            >
                 Add New Recipe
             </button>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
-                {recipes.map((recipe) => (
-                    <div key={recipe._id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden">
-                        <div className="p-4">
-                            <h2 className="text-xl font-bold">{recipe.name}</h2>
-                            <p className="text-gray-700 mt-2">{recipe.description}</p>
-                            <h3 className="mt-4 font-semibold">Ingredients:</h3>
-                            <ul className="list-disc pl-5 text-gray-600">
-                                {recipe.ingredients.map((ingredient, index) => (
-                                    <li key={index}>{ingredient}</li>
-                                ))}
-                            </ul>
+            <AddRecipeModal
+                isOpen={isAddModalOpen}
+                closeModal={() => setIsAddModalOpen(false)}
+                addRecipe={(data) => handleAction('add', null, data)}
+            />
 
-                            <button onClick={() => { if (window.confirm("Are you sure?")) handleAction('delete', recipe._id); }} className="mt-4 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
-                                Delete
-                            </button>
-
-                            <button onClick={() => handleEdit(recipe)} className="mt-4 ml-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
-                                Edit
-                            </button>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            <AddRecipeModal isOpen={isAddModalOpen} closeModal={() => setIsAddModalOpen(false)} addRecipe={(data) => handleAction('add', null, data)} />
-
-            {/* Edit Recipe Modal */}
             <EditRecipeModal
                 isOpen={isEditModalOpen}
                 closeModal={() => setIsEditModalOpen(false)}

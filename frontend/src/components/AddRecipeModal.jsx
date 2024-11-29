@@ -47,8 +47,16 @@ const AddRecipeModal = ({isOpen, closeModal, addRecipe}) => {
             description: formData.description,
         };
         await addRecipe(newRecipe);
+
+        setFormData({
+            name: '',
+            description: '',
+            ingredients: [''],
+        });
+
         closeModal();
     };
+
 
     if (!isOpen) return null;
 
