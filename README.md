@@ -15,7 +15,7 @@ This is a full-stack application to log and manage recipes. It features a React 
 - **Back-end**: Node.js, Express, MongoDB
 
 - **UI**:
-    - Responsive design built with **TailwindCSS**.
+  - Responsive design built with **TailwindCSS** and enhanced with **DaisyUI** for ready-made components and styling utilities.
 
 - **Backend**:
     - RESTful API using **Node.js** and **Express**.
